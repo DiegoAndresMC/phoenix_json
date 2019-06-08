@@ -13,14 +13,16 @@ defmodule ProyectoEjemploPhxWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", ProyectoEjemploPhxWeb do
-    pipe_through :browser
-
-    get "/", PageController, :index
+  pipeline :json_api do
+    plug :accepts, ["json-api"]
+    plug JaSerializer.Deserializer
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", ProyectoEjemploPhxWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", ProyectoEjemploPhxWeb do
+    pipe_through :json_api
+
+    resources "/projects", ProjectController, only: [:index, :show]
+    resources "/documents", DocumentController, only: [:index, :show]
+  end
 end
